@@ -1,0 +1,8 @@
+ubuntu/Ubuntu-Bold.ttf
+ubuntucondensed/UbuntuCondensed-Regular.ttf
+ubuntumono/UbuntuMono-Regular.ttf
+trajanpro/TrajanPro-Regular.ttf
+futura/FuturaTExtBolOblRo1-Regular.ttf
+bodonibolditalic/BodoniDisplayBoldItalic.ttf
+garamond/GaramondRegular.ttf
+Bickampro/BickhamPro-Regular.ttf

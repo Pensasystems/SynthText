@@ -19,7 +19,7 @@ import os.path as osp
 from synthgen import *
 from common import *
 import wget, tarfile
-
+from PIL import Image
 
 ## Define some configuration variables:
 NUM_IMG = -1 # no. of images to use for generation (-1 to use all available):
@@ -28,10 +28,17 @@ SECS_PER_IMG = 5 #max time per image in seconds
 
 # path to the data-file, containing image, depth and segmentation:
 DATA_PATH = 'data'
-DB_FNAME = osp.join(DATA_PATH,'dset.h5')
+#DB_FNAME = osp.join(DATA_PATH,'dset.h5')
+#IMNAME_FNAME = osp.join(DATA_PATH,'imnames_mine.txt')
+IMNAME_FNAME = osp.join(DATA_PATH,'imnames_mine.txt')
+IMG_FNAME = osp.join(DATA_PATH,'bg_img')
+DEPTH_FNAME = osp.join(DATA_PATH,'depth.h5')
+SEG_FNAME = osp.join(DATA_PATH,'seg.h5')
 # url of the data (google-drive public file):
 DATA_URL = 'http://www.robots.ox.ac.uk/~ankush/data.tar.gz'
-OUT_FILE = 'results/SynthText.h5'
+OUT_FILE = 'results/fulldata.h5'
+
+
 
 def get_data():
   """
@@ -76,7 +83,7 @@ def add_res_to_db(imgname,res,db):
 def main(viz=False):
   # open databases:
   print colorize(Color.BLUE,'getting data..',bold=True)
-  db = get_data()
+  #db = get_data()
   print colorize(Color.BLUE,'\t-> done',bold=True)
 
   # open the output h5 file:
@@ -85,7 +92,10 @@ def main(viz=False):
   print colorize(Color.GREEN,'Storing the output in: '+OUT_FILE, bold=True)
 
   # get the names of the image files in the dataset:
-  imnames = sorted(db['image'].keys())
+  with open(IMNAME_FNAME) as f:
+	imnames = f.readlines()
+  imnames = [x.strip() for x in imnames]
+  #imnames = sorted(db['image'].keys())
   N = len(imnames)
   global NUM_IMG
   if NUM_IMG < 0:
@@ -97,17 +107,21 @@ def main(viz=False):
     imname = imnames[i]
     try:
       # get the image:
-      img = Image.fromarray(db['image'][imname][:])
+      img = Image.open(IMG_FNAME + '/' + imname) 
+      #img = cv2.imread(IMG_FNAME + '/' + imname, cv2.IMREAD_COLOR)
+      #img = Image.fromarray(db['image'][imname][:])
       # get the pre-computed depth:
       #  there are 2 estimates of depth (represented as 2 "channels")
       #  here we are using the second one (in some cases it might be
       #  useful to use the other one):
-      depth = db['depth'][imname][:].T
+      depth_h5 = h5py.File(DEPTH_FNAME,'r')
+      depth = depth_h5[imname][:].T
       depth = depth[:,:,1]
       # get segmentation:
-      seg = db['seg'][imname][:].astype('float32')
-      area = db['seg'][imname].attrs['area']
-      label = db['seg'][imname].attrs['label']
+      seg_h5 = h5py.File(SEG_FNAME,'r')
+      seg = seg_h5['mask'][imname][:].astype('float32')
+      area = seg_h5['mask'][imname].attrs['area']
+      label = seg_h5['mask'][imname].attrs['label']
 
       # re-size uniformly:
       sz = depth.shape[:2][::-1]
@@ -128,7 +142,7 @@ def main(viz=False):
       traceback.print_exc()
       print colorize(Color.GREEN,'>>>> CONTINUING....', bold=True)
       continue
-  db.close()
+  #db.close()
   out_db.close()
 
 

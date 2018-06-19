@@ -1,0 +1,6 @@
+
+count : 60
+
+unique symbols present in the (newsgroup.txt) the file with all the CPG names from wheree synth gen samples words to place on the images:
+
+set(['\x80', '\n', '\x94', '\x98', ' ', '%', "'", '&', '-', '.', '1', '0', '3', '2', '5', '4', '7', '6', '9', '8', 'A', 'C', 'B', 'E', 'D', 'G', 'F', 'I', 'H', 'K', 'J', 'M', 'L', 'O', 'N', 'Q', 'P', 'S', 'R', 'U', 'T', 'W', 'V', 'Y', 'X', 'Z', 'a', 'c', '\xe2', 'e', 'd', 'h', 'k', 'm', 'l', 'o', 'p', 's', 'r', '|'])
